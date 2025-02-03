@@ -1,10 +1,12 @@
-# app.py
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import pickle
 import os
+
+# Ensure the directory exists for model saving
+os.makedirs('models', exist_ok=True)
 
 app = Flask(__name__)
 
@@ -27,7 +29,7 @@ def initialize_model(sheet_id, sheet_gid):
         model.fit(X, y)
         
         # Save model
-        with open('model.pkl', 'wb') as file:
+        with open('models/model.pkl', 'wb') as file:
             pickle.dump(model, file)
         
         return model
@@ -38,10 +40,10 @@ def initialize_model(sheet_id, sheet_gid):
 def get_model():
     """Get the trained model"""
     try:
-        if not os.path.exists('model.pkl'):
+        if not os.path.exists('models/model.pkl'):
             model = initialize_model('1cHxHplghQcUINvoBlpqebRm5CcyHqVDeeuS8PCqtgPY', '750909688')
         else:
-            with open('model.pkl', 'rb') as file:
+            with open('models/model.pkl', 'rb') as file:
                 model = pickle.load(file)
         return model
     except Exception as e:
@@ -77,8 +79,5 @@ def predict():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
-if __name__ == '__main__':
-    # Initialize model on startup
-    get_model()
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+# Ensure model is initialized on startup
+get_model()
