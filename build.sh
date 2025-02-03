@@ -2,12 +2,15 @@
 # exit on error
 set -o errexit
 
-# Install system dependencies for numpy
+# Update and install system dependencies
 apt-get update
-apt-get install -y python3-dev
+apt-get install -y python3-pip python3-dev
 
-# Upgrade pip
-python -m pip install --upgrade pip
+# Upgrade pip and setuptools
+python3 -m pip install --upgrade pip setuptools wheel
 
 # Install requirements
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
+
+# Verify gunicorn installation
+python3 -m pip show gunicorn
