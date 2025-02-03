@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Stock Predictor</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <style>
+        .gradient-custom {
+            background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+        }
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        .stock-icon {
+            font-size: 3rem;
+            margin: 15px;
+            color: #0d6efd;
+            transition: all 0.3s ease;
+        }
+        .stock-icon:hover {
+            transform: scale(1.2);
+            color: #0dcaf0;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container min-vh-100 d-flex align-items-center justify-content-center py-5">
+        <div class="row w-100">
+            <div class="col-lg-6 mb-4" data-aos="fade-right">
+                <div class="text-center mb-4">
+                    <div class="d-flex justify-content-center">
+                        <i class="fas fa-chart-line stock-icon floating"></i>
+                        <i class="fas fa-dollar-sign stock-icon floating" style="animation-delay: 0.2s"></i>
+                        <i class="fas fa-rocket stock-icon floating" style="animation-delay: 0.4s"></i>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body p-4">
+                        <h2 class="text-center mb-4 fw-bold text-primary">Smart Stock Predictor</h2>
+                        <p class="text-muted text-center mb-4">Enter the 52-week range to get AI-powered price predictions</p>
+                        
+                        <form id="predictionForm" class="needs-validation" novalidate>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold"><i class="fas fa-arrow-down text-danger me-2"></i>52 Week Low ($)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" id="low" class="form-control" step="0.01" min="0" required>
+                                    <div class="invalid-feedback">Please enter a valid price</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label fw-bold"><i class="fas fa-arrow-up text-success me-2"></i>52 Week High ($)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" id="high" class="form-control" step="0.01" min="0" required>
+                                    <div class="invalid-feedback">Please enter a valid price</div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 py-3 gradient-custom">
+                                <i class="fas fa-robot me-2"></i>Generate Prediction
+                            </button>
+                        </form>
+
+                        <div id="result" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+                        <h3 class="text-center mb-4 fw-bold text-primary">Market Insights</h3>
+                        <div class="text-center mb-4">
+                            <i class="fas fa-brain stock-icon"></i>
+                        </div>
+                        <div class="d-flex flex-column gap-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="fas fa-info-circle text-primary me-2"></i>
+                                <span>Our AI model analyzes historical patterns and market trends</span>
+                            </div>
+                            <div class="p-3 bg-light rounded">
+                                <i class="fas fa-chart-bar text-primary me-2"></i>
+                                <span>Technical analysis combined with machine learning</span>
+                            </div>
+                            <div class="p-3 bg-light rounded">
+                                <i class="fas fa-percentage text-primary me-2"></i>
+                                <span>High accuracy rate based on historical data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true
+        });
+
+        // Form validation and submission
+        document.getElementById('predictionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const low = document.getElementById('low').value;
+            const high = document.getElementById('high').value;
+            const resultDiv = document.getElementById('result');
+
+            if (!form.checkValidity()) {
+                e.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
+
+            if (parseFloat(low) > parseFloat(high)) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        52-week low cannot be greater than 52-week high
+                    </div>`;
+                return;
+            }
+
+            // Show loading spinner
+            resultDiv.innerHTML = `
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>`;
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ low, high })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success" role="alert">
+                            <h4 class="alert-heading mb-2">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Prediction Ready!
+                            </h4>
+                            <p class="mb-0">Predicted Price: <span class="fw-bold">$${data.prediction}</span></p>
+                        </div>`;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            ${data.error}
+                        </div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error making prediction. Please try again.
+                    </div>`;
+            }
+        });
+    </script>
+</body>
+</html>
