@@ -1,0 +1,39 @@
+.gradient-custom {
+    background: linear-gradient(45deg, #0d6efd, #0dcaf0);
+}
+
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+.stock-icon {
+    font-size: 3rem;
+    margin: 15px;
+    color: #0d6efd;
+    transition: all 0.3s ease;
+}
+
+.stock-icon:hover {
+    transform: scale(1.2);
+    color: #0dcaf0;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
