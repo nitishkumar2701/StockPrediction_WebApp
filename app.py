@@ -13,9 +13,7 @@ os.makedirs('models', exist_ok=True)
 app = Flask(__name__)
 
 def create_fallback_model():
-    """Create a basic model if network initialization fails"""
     try:
-        # Create a dummy dataset
         np.random.seed(42)
         X = np.random.rand(100, 2) * 100
         y = X[:, 0] * 0.5 + X[:, 1] * 0.5 + np.random.normal(0, 10, 100)
@@ -92,7 +90,6 @@ def predict():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
-# Ensure model is initialized on startup
 get_model()
 
 if __name__ == '__main__':
